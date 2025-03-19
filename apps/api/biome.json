@@ -1,4 +1,23 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.8.1/schema.json",
-  "extends": ["../../packages/biome-config/api.json"]
+  "extends": ["../../packages/biome-config/api.json"],
+  "linter": {
+    "rules": {
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
+      "correctness": {
+        "noUnusedImports": "error"
+      },
+      "style": {
+        "useImportType": "off",
+        "useNodejsImportProtocol": "off"
+      }
+    }
+  },
+  "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    }
+  }
 }

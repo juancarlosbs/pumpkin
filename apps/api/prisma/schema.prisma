@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = []
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MuscleGroup {
+  id        String           @id @default(uuid())
+  name      String           @unique
+  subgroups MuscleSubgroup[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+model MuscleSubgroup {
+  id            String      @id @default(uuid())
+  name          String
+  muscleGroup   MuscleGroup @relation(fields: [muscleGroupId], references: [id])
+  muscleGroupId String
+  exercises     Exercise[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([name, muscleGroupId])
+}
+
+model Exercise {
+  id               String            @id @default(uuid())
+  name             String
+  description      String?
+  muscleSubgroup   MuscleSubgroup    @relation(fields: [muscleSubgroupId], references: [id])
+  muscleSubgroupId String
+  workoutExercises WorkoutExercise[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@unique([name, muscleSubgroupId])
+}
+
+model Workout {
+  id               String            @id @default(uuid())
+  date             DateTime          @default(now())
+  name             String?
+  notes            String?
+  workoutExercises WorkoutExercise[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model WorkoutExercise {
+  id         String        @id @default(uuid())
+  workout    Workout       @relation(fields: [workoutId], references: [id])
+  workoutId  String
+  exercise   Exercise      @relation(fields: [exerciseId], references: [id])
+  exerciseId String
+  sets       ExerciseSet[]
+  notes      String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@unique([workoutId, exerciseId])
+}
+
+model ExerciseSet {
+  id                String          @id @default(uuid())
+  workoutExercise   WorkoutExercise @relation(fields: [workoutExerciseId], references: [id])
+  workoutExerciseId String
+  setNumber         Int
+  reps              Int
+  weight            Float
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@unique([workoutExerciseId, setNumber])
+}
