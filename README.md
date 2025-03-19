@@ -1,84 +1,150 @@
-# Turborepo starter
+# Workout Tracker 💪
 
-This Turborepo starter is maintained by the Turborepo core team.
+A comprehensive workout tracking system to monitor your gym progress, including sets, reps, and weight for each exercise.
 
-## Using this example
+## Features
 
-Run the following command:
+- Track workouts with dates and notes
+- Organize exercises by muscle groups and subgroups
+- Record sets, repetitions, and weight for each exercise
+- Monitor your progress over time
+- Visualize strength gains and improvements
 
-```sh
-npx create-turbo@latest
-```
+## Tech Stack
 
-## What's inside?
+- **Backend**: NestJS with TypeScript
+- **Database**: PostgreSQL with Prisma ORM
+- **Validation**: Zod for schema validation
+- **Infrastructure**: Docker for database containerization
+- **API Documentation**: Postman Collection included
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+## Project Structure
 
 ```
-cd my-turborepo
-pnpm build
+apps/
+├── api/                  # NestJS backend application
+│   ├── prisma/           # Prisma schema and migrations
+│   ├── src/
+│   │   ├── exercises/    # Exercise management
+│   │   ├── muscle-groups/# Muscle group management
+│   │   ├── muscle-subgroups/ # Muscle subgroup management
+│   │   ├── workouts/     # Workout, workout exercises, sets
+│   │   ├── prisma/       # Prisma service
+│   │   └── app.module.ts # Main application module
+├── web/                  # Frontend application (to be implemented)
 ```
 
-### Develop
+## Getting Started
 
-To develop all apps and packages, run the following command:
+### Prerequisites
 
-```
-cd my-turborepo
-pnpm dev
-```
+- Node.js (v18+)
+- Docker and Docker Compose
+- pnpm or npm
 
-### Remote Caching
+### Installation
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
+1. Clone the repository:
+```bash
+git clone https://github.com/your-username/workout-tracker.git
+cd workout-tracker
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
+2. Install dependencies:
+```bash
+pnpm install
 ```
 
-## Useful Links
+3. Start the PostgreSQL database using Docker:
+```bash
+docker-compose up -d
+```
+This will create a container named `workout-tracker-db` with PostgreSQL running on port 5432.
 
-Learn more about the power of Turborepo:
+4. Set up environment variables:
+```bash
+cp .env.example .env
+```
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+5. Run database migrations:
+```bash
+cd apps/api
+npx prisma migrate dev
+```
+
+6. Seed the database with initial data:
+```bash
+npm run prisma:seed
+```
+
+7. Start the development server:
+```bash
+npm run dev
+```
+
+The API will be available at `http://localhost:3000`.
+
+## API Endpoints
+
+### Muscle Groups
+- `GET /muscle-groups` - List all muscle groups
+- `GET /muscle-groups/:id` - Get a specific muscle group
+- `POST /muscle-groups` - Create a new muscle group
+- `PUT /muscle-groups/:id` - Update a muscle group
+- `DELETE /muscle-groups/:id` - Delete a muscle group
+
+### Muscle Subgroups
+- `GET /muscle-subgroups` - List all muscle subgroups
+- `GET /muscle-subgroups?muscleGroupId=:id` - List subgroups for a specific muscle group
+- `POST /muscle-subgroups` - Create a new muscle subgroup
+- `PUT /muscle-subgroups/:id` - Update a muscle subgroup
+- `DELETE /muscle-subgroups/:id` - Delete a muscle subgroup
+
+### Exercises
+- `GET /exercises` - List all exercises
+- `GET /exercises/:id` - Get a specific exercise
+- `POST /exercises` - Create a new exercise
+- `PUT /exercises/:id` - Update an exercise
+- `DELETE /exercises/:id` - Delete an exercise
+
+### Workouts
+- `GET /workouts` - List all workouts
+- `GET /workouts/:id` - Get a specific workout
+- `POST /workouts` - Create a new workout
+- `PUT /workouts/:id` - Update a workout
+- `DELETE /workouts/:id` - Delete a workout
+
+### Workout Exercises
+- `GET /workouts/:workoutId/exercises/:id` - Get a specific exercise in a workout
+- `POST /workouts/:workoutId/exercises` - Add an exercise to a workout
+- `PUT /workouts/:workoutId/exercises/:id` - Update an exercise in a workout
+- `DELETE /workouts/:workoutId/exercises/:id` - Remove an exercise from a workout
+
+### Exercise Sets
+- `GET /workout-exercises/:workoutExerciseId/sets` - List all sets for an exercise
+- `GET /workout-exercises/:workoutExerciseId/sets/:id` - Get a specific set
+- `POST /workout-exercises/:workoutExerciseId/sets` - Add a set to an exercise
+- `POST /workout-exercises/:workoutExerciseId/sets/batch` - Add multiple sets at once
+- `PUT /workout-exercises/:workoutExerciseId/sets/:id` - Update a set
+- `DELETE /workout-exercises/:workoutExerciseId/sets/:id` - Delete a set
+
+## Development
+
+### Running Tests
+```bash
+npm run test
+```
+
+### Database Management
+- Access Prisma Studio (database GUI):
+```bash
+cd apps/api
+npx prisma studio
+```
+
+### API Testing
+Import the included Postman collection to test all API endpoints.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
